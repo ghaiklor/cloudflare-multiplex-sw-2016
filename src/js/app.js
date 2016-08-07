@@ -15,7 +15,7 @@ if ('serviceWorker' in navigator) {
 
   for (let i = 0, l = videos.length; i < l; i++) {
     const video = videos[i];
-    const src = video.getAttribute('data-src');
+    const src = video.src;
 
     if (src) {
       const isYoutube = src && src.match(/(?:youtu|youtube)(?:\.com|\.be)\/([\w\W]+)/i);
