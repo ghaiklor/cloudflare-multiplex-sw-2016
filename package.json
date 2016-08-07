@@ -1,0 +1,24 @@
+{
+  "name": "cloudflare-multiplex-sw-2016",
+  "version": "1.0.0",
+  "description": "Technical task for CloudFlare (Aug 2016)",
+  "main": "server.js",
+  "dependencies": {
+    "connect": "^3.4.1",
+    "serve-static": "^1.11.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghaiklor/cloudflare-multiplex-sw-2016.git"
+  },
+  "author": "ghaiklor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ghaiklor/cloudflare-multiplex-sw-2016/issues"
+  },
+  "homepage": "https://github.com/ghaiklor/cloudflare-multiplex-sw-2016#readme"
+}
