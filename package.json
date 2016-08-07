@@ -2,14 +2,14 @@
   "name": "cloudflare-multiplex-sw-2016",
   "version": "1.0.0",
   "description": "Technical task for CloudFlare (Aug 2016)",
-  "main": "server.js",
+  "main": "src/server.js",
   "dependencies": {
     "connect": "^3.4.1",
     "serve-static": "^1.11.1"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node server.js"
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
