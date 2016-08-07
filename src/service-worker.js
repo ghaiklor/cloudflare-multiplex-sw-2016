@@ -1,7 +1,7 @@
 self.addEventListener('install', event => console.log('[ServiceWorker] Installed'));
 self.addEventListener('activate', event => console.log('[ServiceWorker] Activated'));
 self.addEventListener('fetch', event => {
-  console.log(`[ServiceWorker] is fetching ${event.request.url}`);
+  console.log(`[ServiceWorker] Fetching ${event.request.url}`);
 
   if (event.request.headers.get('range')) {
     const position = Number(/^bytes\=(\d+)\-$/g.exec(event.request.headers.get('range'))[1]);
@@ -10,7 +10,7 @@ self.addEventListener('fetch', event => {
 
     event.respondWith(
       fetch(event.request)
-        .then(res => res.arrayBuffer())
+        .then(response => response.arrayBuffer())
         .then(ab => {
           return new Response(ab.slice(position), {
             status: 206,
@@ -24,16 +24,6 @@ self.addEventListener('fetch', event => {
   } else {
     console.log(`[ServiceWorker] Non-range request for ${event.request.url}`);
 
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          console.log(`[ServiceWorker] Response from network is: ${response}`);
-          return response;
-        })
-        .catch(error => {
-          console.error(`[ServiceWorker] Fetching failed: ${error}`);
-          throw error;
-        })
-    );
+    event.respondWith(fetch(event.request));
   }
 });
