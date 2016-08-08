@@ -5,6 +5,7 @@ Technical task for CloudFlare (Aug 2016)
 ## Description
 
 Service Workers are currently quickly evolving and it might be interesting to explore various ways they can be used in for the client-side performance.
+
 For this task, I would like you to write a Service Worker that would multiplex big downloads such as video and audio files (since it’s SW, this should work for both <video> tags as well as direct downloads from the same origin) by splitting them into a few parallel chunk requests (similarly to download managers), and combining responses into one in a correct order so that this process would happen transparently for the browser.
 
 ## License
