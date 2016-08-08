@@ -7,7 +7,7 @@ navigator
     const videos = document.querySelectorAll('video');
 
     for (let i = 0; i < videos.length; i++) {
-      videos[i].src = videos[i].getAttribute('data-src');
+      videos[i].src = `${videos[i].getAttribute('data-src')}?t=${Date.now()}`;
     }
   })
   .catch(() => alert('Switch to Google Chrome 52.0.2743.116 (64-bit)'));
