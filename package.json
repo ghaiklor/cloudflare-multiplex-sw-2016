@@ -4,8 +4,7 @@
   "description": "Technical task for CloudFlare (Aug 2016)",
   "main": "src/server.js",
   "dependencies": {
-    "connect": "^3.4.1",
-    "serve-static": "^1.11.1"
+    "http2": "^3.3.4"
   },
   "devDependencies": {},
   "scripts": {
