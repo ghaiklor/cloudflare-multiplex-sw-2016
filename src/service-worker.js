@@ -1,12 +1,13 @@
 self.addEventListener('install', event => console.log('[ServiceWorker] Installed'));
 self.addEventListener('activate', event => console.log('[ServiceWorker] Activated'));
 self.addEventListener('fetch', event => {
-  console.log(`[ServiceWorker] Fetching ${event.request.url}`);
+  const url = event.request.url;
+  const headers = event.request.headers;
 
-  if (event.request.headers.get('range')) {
-    const position = Number(/^bytes\=(\d+)\-$/g.exec(event.request.headers.get('range'))[1]);
+  if (headers.get('range')) {
+    const position = Number(/^bytes\=(\d+)\-$/g.exec(headers.get('range'))[1]);
 
-    console.log(`[ServiceWorker] Range request for ${event.request.url}, starting position: ${position}`);
+    console.log(`[ServiceWorker] Range request for ${url}, starting position: ${position}`);
 
     event.respondWith(
       fetch(event.request)
@@ -16,14 +17,10 @@ self.addEventListener('fetch', event => {
             status: 206,
             statusText: 'Partial Content',
             headers: [
-              // ['Content-Type', 'video/webm'],
-              ['Content-Range', 'bytes ' + position + '-' +
-              (ab.byteLength - 1) + '/' + ab.byteLength]]
+              ['Content-Range', `bytes ${position}-${ab.byteLength - 1}/${ab.byteLength}`]
+            ]
           });
-        }));
-  } else {
-    console.log(`[ServiceWorker] Non-range request for ${event.request.url}`);
-
-    event.respondWith(fetch(event.request));
+        })
+    );
   }
 });
