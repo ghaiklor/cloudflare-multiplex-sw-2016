@@ -9,7 +9,7 @@ const CERT = fs.readFileSync(path.join(__dirname, '../cert/localhost.crt'));
 const PORT = 8080;
 
 function onRequest(request, response) {
-  const filename = path.join(__dirname, request.url);
+  const filename = request.url === '/' ? path.join(__dirname, 'index.html') : path.join(__dirname, request.url);
 
   if ((filename.indexOf(__dirname) === 0) && fs.existsSync(filename) && fs.statSync(filename).isFile()) {
     response.writeHead(200);
