@@ -12,10 +12,7 @@ function onRequest(request, response) {
   const filename = request.url === '/' ? path.join(__dirname, 'index.html') : path.join(__dirname, request.url);
 
   if ((filename.indexOf(__dirname) === 0) && fs.existsSync(filename) && fs.statSync(filename).isFile()) {
-    response.writeHead(200);
-    const fileStream = fs.createReadStream(filename);
-    fileStream.pipe(response);
-    fileStream.on('finish', response.end);
+    fs.createReadStream(filename).pipe(response).on('finish', response.end);
   } else {
     response.writeHead(404);
     response.end();
