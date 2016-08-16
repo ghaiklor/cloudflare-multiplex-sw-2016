@@ -36,9 +36,6 @@ self.addEventListener('fetch', event => {
           requests.push(
             fetch(url, {
               headers: new Headers({
-                'Accept': '*/*',
-                'Accept-Encoding': 'identity;q=1, *;q=0',
-                'Accept-Language': 'en-US,en;q=0.8',
                 'Range': `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE}/${contentLength}`
               })
             })
