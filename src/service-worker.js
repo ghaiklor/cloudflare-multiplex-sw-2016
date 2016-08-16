@@ -1,4 +1,11 @@
 /**
+ * Size of one chunk when requesting with Range
+ * @type {Number}
+ * @private
+ */
+const CHUNK_SIZE = 102400;
+
+/**
  * Concat two ArrayBuffers
  * @param {ArrayBuffer} ab1
  * @param {ArrayBuffer} ab2
@@ -25,14 +32,14 @@ self.addEventListener('fetch', event => {
       }).then(response => {
         const contentLength = response.headers.get('content-length');
 
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < contentLength / CHUNK_SIZE; i++) {
           requests.push(
             fetch(url, {
               headers: new Headers({
                 'Accept': '*/*',
                 'Accept-Encoding': 'identity;q=1, *;q=0',
                 'Accept-Language': 'en-US,en;q=0.8',
-                'Range': `bytes=${i * 100000}-${(i * 100000) + 100000}/${contentLength}`
+                'Range': `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE}/${contentLength}`
               })
             })
           );
