@@ -36,7 +36,7 @@ self.addEventListener('fetch', event => {
           requests.push(
             fetch(url, {
               headers: new Headers({
-                'Range': `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE}/${contentLength}`
+                'Range': `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE - 1}/${contentLength}`
               })
             })
           );
@@ -49,10 +49,8 @@ self.addEventListener('fetch', event => {
             const result = buffers.reduce((acc, ab) => concatArrayBuffer(acc, ab));
 
             return new Response(result, {
-              status: 206,
-              statusText: 'Partial Content',
+              status: 200,
               headers: [
-                ['Accept-Ranges', 'bytes'],
                 ['Content-Length', contentLength],
                 ['Content-Range', `bytes=0-${result.byteLength - 1}/${contentLength}`],
                 ['Content-Type', 'video/mp4']
