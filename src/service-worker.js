@@ -39,9 +39,9 @@ function buildPartialRequests(url, length) {
 }
 
 /**
- * Triggers each time when HEAD requests is successful
+ * Triggers each time when HEAD request is successful
  * @param {Response} response
- * @returns {Promise} Returns promise that fullfils into new Response object
+ * @returns {Promise} Returns promise that fulfils into new Response object
  * @private
  */
 function onHeadResponse(response) {
