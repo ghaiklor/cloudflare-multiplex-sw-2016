@@ -3,7 +3,7 @@
  * @type {Number}
  * @private
  */
-const CHUNK_SIZE = 102400;
+const CHUNK_SIZE = 204800;
 
 /**
  * Concat two ArrayBuffers
