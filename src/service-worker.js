@@ -20,6 +20,25 @@ function concatArrayBuffer(ab1, ab2) {
 }
 
 /**
+ * Builds an array of separate requests to URL with specified ContentLength
+ * @param {String} url Target URL
+ * @param {Number} length Total length of content located by URL
+ * @returns {Array<Promise>} Returns an array of promises built by fetch()
+ * @private
+ */
+function buildPartialRequests(url, length) {
+  return Array
+    .from({length: Math.ceil(length / CHUNK_SIZE)})
+    .map((_, i) => {
+      return fetch(url, {
+        headers: new Headers({
+          'Range': `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE - 1}/${length}`
+        })
+      })
+    });
+}
+
+/**
  * Triggers each time when HEAD requests is successful
  * @param {Response} response
  * @returns {Promise} Returns promise that fullfils into new Response object
@@ -28,20 +47,9 @@ function concatArrayBuffer(ab1, ab2) {
 function onHeadResponse(response) {
   const contentLength = response.headers.get('content-length');
   const url = response.url;
-  const requests = [];
-
-  for (let i = 0; i < contentLength / CHUNK_SIZE; i++) {
-    requests.push(
-      fetch(url, {
-        headers: new Headers({
-          'Range': `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE - 1}/${contentLength}`
-        })
-      })
-    );
-  }
 
   return Promise
-    .all(requests)
+    .all(buildPartialRequests(url, contentLength))
     .then(responses => Promise.all(responses.map(res => res.arrayBuffer())))
     .then(buffers => new Response(buffers.reduce(concatArrayBuffer)));
 }
