@@ -20,37 +20,6 @@ function concatArrayBuffer(ab1, ab2) {
 }
 
 /**
- * Builds an array of separate requests to URL with specified ContentLength
- * @param {Request} request Request object from original request
- * @param {Number} length Total length of content located by URL
- * @returns {Array<Promise>} Returns an array of promises built by fetch()
- * @private
- */
-function buildPartialRequests(request, length) {
-  return Array
-    .from({length: Math.ceil(length / CHUNK_SIZE)})
-    .map((_, i) => {
-      //FIXME: Failed to execute 'set' on 'Headers': Headers are immutable
-      const newHeaders = request.headers;
-      newHeaders.set('Range', `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE - 1}/${length}`);
-
-      const newRequest = new Request(request.url, {
-        method: request.method,
-        headers: newHeaders,
-        body: request.body,
-        mode: request.mode,
-        credentials: request.credentials,
-        cache: request.cache,
-        redirect: request.redirect,
-        referrer: request.referrer,
-        integrity: request.integrity
-      });
-
-      return fetch(newRequest);
-    });
-}
-
-/**
  * Triggers each time when HEAD request is successful
  * @param {FetchEvent} event Original FetchEvent from request
  * @param {Response} response HEAD response from a server
@@ -60,9 +29,20 @@ function buildPartialRequests(request, length) {
  */
 function onHeadResponse(event, response) {
   const contentLength = response.headers.get('content-length');
+  const promises = Array
+    .from({length: Math.ceil(contentLength / CHUNK_SIZE)})
+    .map((_, i) => {
+      const headers = new Headers();
+
+      for (let pair of event.request.headers.entries()) headers.append(pair[0], pair[1]);
+      headers.append('Range', `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE - 1}/${contentLength}`);
+
+      const request = new Request(event.request, {headers: headers});
+      return fetch(request);
+    });
 
   return Promise
-    .all(buildPartialRequests(event.request.clone(), contentLength))
+    .all(promises)
     .then(responses => Promise.all(responses.map(res => res.arrayBuffer())))
     .then(buffers => new Response(buffers.reduce(concatArrayBuffer)));
 }
@@ -75,18 +55,7 @@ function onHeadResponse(event, response) {
  * @private
  */
 function onFetch(event) {
-  //TODO: make request constructor more flexible
-  const request = new Request(event.request.url, {
-    method: 'HEAD',
-    headers: event.request.headers,
-    body: event.request.body,
-    mode: event.request.mode,
-    credentials: event.request.credentials,
-    cache: event.request.cache,
-    redirect: event.request.redirect,
-    referrer: event.request.referrer,
-    integrity: event.request.integrity
-  });
+  const request = new Request(event.request, {method: 'HEAD'});
 
   return event.respondWith(fetch(request).then(onHeadResponse.bind(this, event)));
 }
