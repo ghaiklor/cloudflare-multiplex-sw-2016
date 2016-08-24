@@ -13,6 +13,10 @@ For this task, I would like you to write a Service Worker that would multiplex b
 - What happens if Service Workers are not supported by browser? (_It will not registers and page will proceed as usual_)
 - What happens when original request\response with some headers will be replaced by my own request\response without them? (_IN PROGRESS_)
 - What happens in case when server doesn't understand `Range` header and will reply with full content, but not partial one? (_IN PROGRESS_)
+- What are the possible response codes and what would happen with your implementation if those are not simple 200 OK? (redirects, server errors, network errors etc.) (_TODO_)
+- What penalties on the network does current implementation have on big files (e.g. movies)? (_TODO_)
+- What would happen to form posts, file uploads etc. with current implementation? (_TODO_)
+- What would happen to third-party requests going through your library? (_TODO_)
 
 ## License
 
