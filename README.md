@@ -8,6 +8,11 @@ Service Workers are currently quickly evolving and it might be interesting to ex
 
 For this task, I would like you to write a Service Worker that would multiplex big downloads such as video and audio files (since it’s SW, this should work for both <video> tags as well as direct downloads from the same origin) by splitting them into a few parallel chunk requests (similarly to download managers), and combining responses into one in a correct order so that this process would happen transparently for the browser.
 
+## Known Issues
+
+- What happens when original request\response with some headers will be replaced by my own request\response without them? (_IN PROGRESS_)
+- What happens in case when server doesn't understand `Range` header and will reply with full content, but not partial one? (_IN PROGRESS_)
+
 ## License
 
 The MIT License (MIT)
