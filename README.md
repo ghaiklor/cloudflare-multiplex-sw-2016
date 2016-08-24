@@ -10,6 +10,7 @@ For this task, I would like you to write a Service Worker that would multiplex b
 
 ## Known Issues
 
+- What happens if Service Workers are not supported by browser? (_It will not registers and page will proceed as usual_)
 - What happens when original request\response with some headers will be replaced by my own request\response without them? (_IN PROGRESS_)
 - What happens in case when server doesn't understand `Range` header and will reply with full content, but not partial one? (_IN PROGRESS_)
 
