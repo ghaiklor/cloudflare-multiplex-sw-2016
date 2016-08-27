@@ -32,12 +32,10 @@ function onHeadResponse(event, response) {
   const promises = Array
     .from({length: Math.ceil(contentLength / CHUNK_SIZE)})
     .map((_, i) => {
-      const headers = new Headers();
-
-      for (let pair of event.request.headers.entries()) headers.append(pair[0], pair[1]);
+      const headers = new Headers(event.request.headers);
       headers.append('Range', `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE - 1}/${contentLength}`);
 
-      const request = new Request(event.request, {headers: headers});
+      const request = new Request(event.request.url, {headers});
       return fetch(request);
     });
 
@@ -55,7 +53,7 @@ function onHeadResponse(event, response) {
  * @private
  */
 function onFetch(event) {
-  const request = new Request(event.request, {method: 'HEAD'});
+  const request = new Request(event.request.url, {method: 'HEAD', headers: event.request.headers});
 
   return event.respondWith(fetch(request).then(onHeadResponse.bind(this, event)));
 }
