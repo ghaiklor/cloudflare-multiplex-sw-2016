@@ -20,6 +20,31 @@ function concatArrayBuffer(ab1, ab2) {
 }
 
 /**
+ * Clones Request object.
+ * The reason for this method is because you can override init properties.
+ * @param {Request} request Request object you would like to clone
+ * @param {Object} init Object with properties you would like to override in clone
+ * @returns {Request}
+ */
+function cloneRequest(request, init) {
+  if (Object.prototype.toString.call(init) !== '[object Object]') return request.clone();
+
+  return new Request(init.url || request.url, {
+    method: init.method || request.method,
+    headers: init.headers || request.headers,
+    body: init.body || request.body,
+    referrer: init.referrer || request.referrer,
+    referrerPolicy: init.referrerPolicy || request.referrerPolicy,
+    // TODO: Do I need to handle this? When uncommented doesn't work because of `navigate` mode
+    // mode: init.mode || request.mode,
+    credentials: init.credentials || request.credentials,
+    cache: init.cache || request.cache,
+    redirect: init.redirect || request.redirect,
+    integrity: init.integrity || request.integrity
+  });
+}
+
+/**
  * Triggers each time when HEAD request is successful
  * @param {FetchEvent} event Original FetchEvent from request
  * @param {Response} response HEAD response from a server
@@ -35,7 +60,7 @@ function onHeadResponse(event, response) {
       const headers = new Headers(event.request.headers);
       headers.append('Range', `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE - 1}/${contentLength}`);
 
-      const request = new Request(event.request.url, {headers});
+      const request = cloneRequest(event.request, {headers});
       return fetch(request);
     });
 
@@ -53,7 +78,7 @@ function onHeadResponse(event, response) {
  * @private
  */
 function onFetch(event) {
-  const request = new Request(event.request.url, {method: 'HEAD', headers: event.request.headers});
+  const request = cloneRequest(event.request, {method: 'HEAD'});
 
   return event.respondWith(fetch(request).then(onHeadResponse.bind(this, event)));
 }
