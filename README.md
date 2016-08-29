@@ -10,13 +10,33 @@ For this task, I would like you to write a Service Worker that would multiplex b
 
 ## Known Issues
 
-- What happens if Service Workers are not supported by browser? (_It will not registers and page will proceed as usual_)
-- What happens when original request\response with some headers will be replaced by my own request\response without them? (_IN PROGRESS_)
-- What happens in case when server doesn't understand `Range` header and will reply with full content, but not partial one? (_IN PROGRESS_)
-- What are the possible response codes and what would happen with your implementation if those are not simple 200 OK? (redirects, server errors, network errors etc.) (_TODO_)
-- What penalties on the network does current implementation have on big files (e.g. movies)? (_TODO_)
-- What would happen to form posts, file uploads etc. with current implementation? (_TODO_)
-- What would happen to third-party requests going through your library? (_TODO_)
+__What happens if Service Workers are not supported by browser?__
+
+_Service Worker will not be registered and page will proceed as usual._
+
+__What happens when original request\response with some headers will be replaced by my own request\response without them?__
+
+_By now, I'm cloning original request with all properties in there into new `Response` object. Afterwards, I'm making partial requests via this cloned request. Concatenating response from these partial requests, I'm responding with concatenated body and headers from original `HEAD` response._
+
+__What happens in case when server doesn't understand `Range` header and will reply with full content, but not partial one?__
+
+_IN PROGRESS_
+
+__What are the possible response codes and what would happen with your implementation if those are not simple 200 OK? (redirects, server errors, network errors etc.)__
+
+_TODO_
+
+__What penalties on the network does current implementation have on big files (e.g. movies)?__
+
+_TODO_
+
+__What would happen to form posts, file uploads etc. with current implementation?__
+
+_TODO_
+
+__What would happen to third-party requests going through your library?__
+
+_TODO_
 
 ## License
 
