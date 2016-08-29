@@ -67,7 +67,7 @@ function onHeadResponse(event, response) {
   return Promise
     .all(promises)
     .then(responses => Promise.all(responses.map(res => res.arrayBuffer())))
-    .then(buffers => new Response(buffers.reduce(concatArrayBuffer)));
+    .then(buffers => new Response(buffers.reduce(concatArrayBuffer), {headers: response.headers}));
 }
 
 /**
