@@ -21,22 +21,21 @@ function concatArrayBuffer(ab1, ab2) {
 
 /**
  * Triggers each time when HEAD request is successful
- * @param {FetchEvent} event Original FetchEvent from request
+ * @param {Request} request Original request
  * @param {Response} response HEAD response from a server
  * @returns {Promise} Returns promise that fulfils into new Response object
  * @fulfils {Response}
  * @private
  */
-function onHeadResponse(event, response) {
+function onHeadResponse(request, response) {
   const contentLength = response.headers.get('content-length');
   const promises = Array
     .from({length: Math.ceil(contentLength / CHUNK_SIZE)})
     .map((_, i) => {
-      const headers = new Headers(event.request.headers);
+      const headers = new Headers(request.headers);
       headers.append('Range', `bytes=${i * CHUNK_SIZE}-${(i * CHUNK_SIZE) + CHUNK_SIZE - 1}/${contentLength}`);
 
-      const request = new Request(event.request, {mode: 'same-origin', headers});
-      return fetch(request);
+      return fetch(new Request(request, {headers}));
     });
 
   return Promise
@@ -53,11 +52,16 @@ function onHeadResponse(event, response) {
  * @private
  */
 function onFetch(event) {
-  if (event.request.mode === 'navigate') return event.respondWith(fetch(event.request));
-  if (event.request.mode === 'no-cors' && new URL(event.request.url).origin !== location.origin) return event.respondWith(fetch(event.request));
+  const url = new URL(event.request.url);
 
-  const request = new Request(event.request, {method: 'HEAD', mode: 'same-origin'});
-  return event.respondWith(fetch(request).then(onHeadResponse.bind(this, event)));
+  if (event.request.mode === 'navigate') return event.respondWith(fetch(event.request));
+  if (event.request.mode === 'no-cors' && url.origin !== location.origin) return event.respondWith(fetch(event.request));
+
+  let mode = 'cors';
+  if (url.origin === location.origin) mode = 'same-origin';
+
+  const request = new Request(event.request, {mode});
+  return event.respondWith(fetch(new Request(request, {method: 'HEAD'})).then(onHeadResponse.bind(this, request)));
 }
 
 self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
