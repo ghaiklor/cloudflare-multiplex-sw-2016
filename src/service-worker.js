@@ -35,8 +35,7 @@ function cloneRequest(request, init) {
     body: init.body || request.body,
     referrer: init.referrer || request.referrer,
     referrerPolicy: init.referrerPolicy || request.referrerPolicy,
-    // TODO: Do I need to handle this? When uncommented doesn't work because of `navigate` mode
-    // mode: init.mode || request.mode,
+    mode: init.mode || /.*cors/.test(request.mode) ? 'cors' : 'same-origin',
     credentials: init.credentials || request.credentials,
     cache: init.cache || request.cache,
     redirect: init.redirect || request.redirect,
