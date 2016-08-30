@@ -60,4 +60,6 @@ function onFetch(event) {
   return event.respondWith(fetch(request).then(onHeadResponse.bind(this, event)));
 }
 
+self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
+self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', onFetch);
