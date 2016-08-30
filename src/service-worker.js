@@ -78,8 +78,9 @@ function onHeadResponse(event, response) {
  * @private
  */
 function onFetch(event) {
-  const request = cloneRequest(event.request, {method: 'HEAD'});
+  if (event.request.mode === 'navigate') return event.respondWith(fetch(event.request));
 
+  const request = cloneRequest(event.request, {method: 'HEAD'});
   return event.respondWith(fetch(request).then(onHeadResponse.bind(this, event)));
 }
 
